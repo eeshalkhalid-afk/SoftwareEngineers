@@ -19,7 +19,7 @@ public class SoftwareEngineerController
     }
 
     @GetMapping
-    public List<SoftwareEngineer> getEngineers(){
+    public List<SoftwareEngineerDto> getEngineers(){
 
         return softwareEngineerService.getAllSoftwareEngineers();
     }
@@ -31,7 +31,7 @@ public class SoftwareEngineerController
     }
 
     @PostMapping
-    public SoftwareEngineerDto addSoftwareEngineer(@RequestBody SoftwareEngineer softwareEngineer){
+    public SoftwareEngineerDto addSoftwareEngineer(@RequestBody SoftwareEngineerDto softwareEngineer){
         return softwareEngineerService.insertSoftwareEngineer(softwareEngineer);
 
     }
@@ -44,8 +44,8 @@ public class SoftwareEngineerController
 
     @PutMapping("{id}")
 
-    public void updateEngineerById(@RequestBody SoftwareEngineer softwareEngineer, @PathVariable Integer id){
+    public SoftwareEngineerDto updateEngineerById(@RequestBody SoftwareEngineerDto softwareEngineer, @PathVariable Integer id){
 
-        softwareEngineerService.updateSoftwareEngineerById(softwareEngineer,id);
+        return softwareEngineerService.updateSoftwareEngineerById(softwareEngineer,id);
     }
 }

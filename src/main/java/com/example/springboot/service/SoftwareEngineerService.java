@@ -8,6 +8,7 @@ import com.example.springboot.model.SoftwareEngineer;
 import com.example.springboot.repository.SoftwareEngineerRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -22,14 +23,21 @@ public class SoftwareEngineerService
     //usually instead of ur class SoftwareEngineer u have a dto,
     //bcz by using ur class u r exposing user to very pvt details
     //that u might not want the user to know.
-    public List<SoftwareEngineer> getAllSoftwareEngineers()
+    public List<SoftwareEngineerDto> getAllSoftwareEngineers()
     {
-        return softwareEngineerRepository.findAll();
+        List<SoftwareEngineer> allSoftwareEngineers= softwareEngineerRepository.findAll();
+        List<SoftwareEngineerDto> softwareEngineerDtos = new ArrayList<>();
+        allSoftwareEngineers.forEach(softwareEngineer ->
+        {
+            softwareEngineerDtos.add(mapToDto(softwareEngineer));
+        }
+        );
+        return softwareEngineerDtos;
     }
 
 
-    public SoftwareEngineerDto insertSoftwareEngineer(SoftwareEngineer softwareEngineer) {
-
+    public SoftwareEngineerDto insertSoftwareEngineer(SoftwareEngineerDto softwareEngineerDto) {
+        SoftwareEngineer softwareEngineer = mapToModel(softwareEngineerDto);
         return mapToDto(softwareEngineerRepository.save(softwareEngineer));
     }
 
@@ -38,6 +46,14 @@ public class SoftwareEngineerService
         SoftwareEngineer softwareEngineer = softwareEngineerRepository.findById(id).orElseThrow(() -> new IllegalStateException(id + "not found"));
         return mapToDto(softwareEngineer);
     }
+
+    private SoftwareEngineer mapToModel(SoftwareEngineerDto softwareEngineerDto) {
+        SoftwareEngineer softwareEngineer = new SoftwareEngineer();
+        softwareEngineer.setName(softwareEngineerDto.getName());
+        softwareEngineer.setTechStack(softwareEngineerDto.getTechStack());
+        return softwareEngineer;
+    }
+
 
     private SoftwareEngineerDto mapToDto(SoftwareEngineer softwareEngineer) {
         SoftwareEngineerDto softwareEngineerDto = new SoftwareEngineerDto();
@@ -52,13 +68,14 @@ public class SoftwareEngineerService
         softwareEngineerRepository.deleteById(id);
     }
 
-    public void updateSoftwareEngineerById(SoftwareEngineer softwareEngineer, Integer id) {
+    public SoftwareEngineerDto updateSoftwareEngineerById(SoftwareEngineerDto softwareEngineerDto, Integer id) {
+
         SoftwareEngineer softwareEngineerById = softwareEngineerRepository.findById(id).orElseThrow(() -> new IllegalStateException(id + "not found"));
         //maptomodel function
-        softwareEngineerById.setName(softwareEngineer.getName());
-        softwareEngineerById.setTechStack(softwareEngineer.getTechStack());
+        softwareEngineerById.setName(softwareEngineerDto.getName());
+        softwareEngineerById.setTechStack(softwareEngineerDto.getTechStack());
 
-        softwareEngineerRepository.save(softwareEngineerById);
+        return mapToDto(softwareEngineerRepository.save(softwareEngineerById));
 
     }
 }
